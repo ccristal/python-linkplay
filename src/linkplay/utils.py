@@ -97,7 +97,11 @@ async def session_call_api_json(
         return json.loads(result)  # type: ignore
     except json.JSONDecodeError as jsonexc:
         url = API_ENDPOINT.format(endpoint, command)
-        LOGGER.warning("Unexpected json for %s: %s", url, jsonexc)
+        # WiiM devices answer "Failed" to getMetaInfo when nothing is loaded
+        if result == "Failed":
+            LOGGER.debug("Unexpected json for %s: %s", url, jsonexc)
+        else:
+            LOGGER.warning("Unexpected json for %s: %s", url, jsonexc)
         raise LinkPlayInvalidDataException(
             message=f"Unexpected JSON ({result}) received from '{url}'", data=result
         ) from jsonexc

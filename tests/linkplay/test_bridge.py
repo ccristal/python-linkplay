@@ -1,5 +1,6 @@
 """Test bridge functionality."""
 
+import logging
 from typing import Any
 from unittest.mock import AsyncMock, MagicMock, Mock, patch
 
@@ -565,7 +566,7 @@ async def test_update_status_does_not_trigger_controller_on_no_mode_change(mock_
     mock_bridge.device.controller.assert_not_called()
 
 
-async def test_meta_info_failed_handling():
+async def test_meta_info_failed_handling(caplog: pytest.LogCaptureFixture):
     """Test that the player handles a failed META_INFO request correctly."""
 
     async def mock_session_call_api_json_side_effect(endpoint, session, command):
@@ -600,6 +601,9 @@ async def test_meta_info_failed_handling():
 
         # Verify that the mocked function was called with the correct command
         mock_api.assert_called_with("http://1.2.3.4", None, LinkPlayCommand.META_INFO)
+
+        # Verify that the expected "Failed" answer is not logged as a warning
+        assert not [r for r in caplog.records if r.levelno >= logging.WARNING]
 
 
 async def test_audio_output_control():
