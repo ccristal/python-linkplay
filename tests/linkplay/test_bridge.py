@@ -604,7 +604,6 @@ async def test_meta_info_failed_handling():
         mock_api.assert_called_with("http://1.2.3.4", None, LinkPlayCommand.META_INFO)
 
 
-
 @pytest.mark.parametrize(
     ("album_art_uri", "expected"),
     [
@@ -628,6 +627,7 @@ def test_album_art_without_metainfo():
     player.metainfo = {}
 
     assert player.album_art == ""
+
 
 async def test_audio_output_control():
     """Test that the player handles a audio output control correctly."""
